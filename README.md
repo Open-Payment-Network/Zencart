@@ -34,9 +34,9 @@ TEXT NULL, ADD COLUMN `paymentnetwork_lastAction` VARCHAR(32) NULL
 ```
 
 3. Mouseover the "Modules" link in the top menu and click 'Payment'. Next, click the circle for PaymentNetwork Form and finally click 'install' on the right side of the screen
-4. Follow the instructions that appear, and enter all the necessary details, such as the Merchant ID and signature. Click 'update', and Ppayment Network is now integrated with your shopping cart
+4. Follow the instructions that appear, and enter all the necessary details, such as the Merchant ID and signature. Click 'update', and Payment Network is now integrated with your shopping cart
 
-If you would like to make edits to the Ppayment Network Integration such as updating the Merchant ID, hover over the modules drop down menu and click payments. Click on 'Ppayment Network Integration' in the list that appears, and click on 'edit' on the right hand side.
+If you would like to make edits to the Payment Network Integration such as updating the Merchant ID, hover over the modules drop down menu and click payments. Click on 'Payment Network Integration' in the list that appears, and click on 'edit' on the right hand side.
 
 License
 ----

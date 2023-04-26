@@ -12,7 +12,7 @@ define('MODULE_PAYMENT_PAYMENTNETWORK_FORM_URL', 'https://gateway.exampledomainh
 
 define('MODULE_PAYMENT_PAYMENTNETWORK_ADMIN_TITLE', 'PaymentNetwork Integration');
 define('MODULE_PAYMENT_PAYMENTNETWORK_ADMIN_DESCRIPTION', '<a target=\"_blank\" href=\"https://www.paymentnetwork.com?ref=zen-cart\"><img style=\"float:right;margin-right:8px;\" src=\"https://www.paymentnetwork.com/images/logo.png?ref=zen-cart\"/></a> <br/><a target="_blank" href="https://www.paymentnetwork.com/signup?ref=zen-cart">Click Here to Sign Up for an Account</a><br /><br /><a target="_blank" href="https://mms.paymentnetwork.com/admin?ref=zen-cart">Login to the PaymentNetwork Merchant Area</a><br /><br /><strong>Requirements:</strong><br /><hr />*<strong>PaymentNetwork Account</strong> (see link above to signup)<br />*<strong>PaymentNetwork MerchantID</strong> available from your Merchant Area<br/> *<strong>PaymentNetwork Merchant Password</strong> set in mms &amp; required for zen-cart');
-define('MODULE_PAYMENT_PAYMENTNETWORK_ADMIN_WARNING', 'Warning! Direct Ppayment Network integration must use HTTPS to follow PCI DSS compliancy. Get a certificate from a trused authority and host your website securely to continue using the Direct integration method.');
+define('MODULE_PAYMENT_PAYMENTNETWORK_ADMIN_WARNING', 'Warning! Direct Payment Network integration must use HTTPS to follow PCI DSS compliancy. Get a certificate from a trused authority and host your website securely to continue using the Direct integration method.');
 define('MODULE_PAYMENT_PAYMENTNETWORK_CARD_HOLDER', 'Name as shown on card');
 define('MODULE_PAYMENT_PAYMENTNETWORK_CARD_NUMBER', 'Card Number');
 define('MODULE_PAYMENT_PAYMENTNETWORK_CARD_EXPIRE', 'Card Expires');

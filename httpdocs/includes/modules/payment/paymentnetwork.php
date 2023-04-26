@@ -176,7 +176,7 @@ class paymentnetwork
 	/**
 	 * Create a request array for hosted implementation
 	 * Creates an array for hidden input fields to submit to
-	 * Ppayment Network to start the payment process
+	 * Payment Network to start the payment process
 	 */
 	public function create_hosted_request()
 	{
@@ -493,7 +493,7 @@ HTML;
 	function valid_setup()
 	{
 		$isEnabled = MODULE_PAYMENT_PAYMENTNETWORK_STATUS == 'True';
-		// Make sure that the Ppayment Network module is enable and that we're running HTTPS on a direct capture type
+		// Make sure that the Payment Network module is enable and that we're running HTTPS on a direct capture type
 		return ($isEnabled && in_array(MODULE_PAYMENT_PAYMENTNETWORK_CAPTURE_TYPE, array('Direct', 'Direct V2'), true) && $this->is_https() || $isEnabled && in_array(MODULE_PAYMENT_PAYMENTNETWORK_CAPTURE_TYPE, array('Hosted', 'Modal'), true));
 	}
 	/*
