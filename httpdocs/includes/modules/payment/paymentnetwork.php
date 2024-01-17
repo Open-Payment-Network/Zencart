@@ -18,8 +18,6 @@ class paymentnetwork
 		$this->version = MODULE_PAYMENT_PAYMENTNETWORK_ADMIN_TITLE;
 		$this->description = MODULE_PAYMENT_PAYMENTNETWORK_ADMIN_DESCRIPTION;
 		$this->secret = MODULE_PAYMENT_PAYMENTNETWORK_MERCHANT_SECRET ?: 'merchant_secret_here';
-
-
 		// Set payment form action
 		$this->form_action_url = $this->form_url();
 		// Perform checks and disable module if required config is missing
@@ -204,7 +202,6 @@ class paymentnetwork
 			"customerEmail"     => $order->customer['email_address'],
 			"customerPhone"     => $order->customer['telephone'],
 			"securityToken"     => $_SESSION['securityToken'],
-			//            "formResponsive"    => MODULE_PAYMENT_PAYMENTNETWORK_RESPONSIVE_TYPE == 'True' ? 'Y' : 'N',
 		);
 	}
 

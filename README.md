@@ -13,7 +13,7 @@ Disclaimer: Please note that we no longer support older versions of SDKs and Mod
 
 This Zencart module provides an easy method to integrate with the payment gateway.
  - The httpdocs directory contains the files that need to be uploaded to the root directory of where Zencart is installed
- - Supports Zencart versions: **1.5.x**
+ - Supports Zencart versions: 1.5.8a
 
 # Prerequisites
 

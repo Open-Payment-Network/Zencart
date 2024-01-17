@@ -10,13 +10,11 @@ $define = [
 	'MODULE_PAYMENT_PAYMENTNETWORK_DIRECT_URL' => 'https://gateway.exampledomainhere.com/direct/',
 	'MODULE_PAYMENT_PAYMENTNETWORK_MODAL_URL' => 'https://gateway.exampledomainhere.com/hosted/modal',
 	'MODULE_PAYMENT_PAYMENTNETWORK_FORM_URL' => 'https://gateway.exampledomainhere.com/paymentform/',
-	'MODULE_PAYMENT_PAYMENTNETWORK_MERCHANT_ID' => 'merchant_id_here'
+	'MODULE_PAYMENT_PAYMENTNETWORK_MERCHANT_ID' => 'merchant_id_here',
 	'MODULE_PAYMENT_PAYMENTNETWORK_MERCHANT_SECRET' => 'merchant_secret_here',
-
-
-	'MODULE_PAYMENT_PAYMENTNETWORK_ADMIN_TITLE' => 'exampledomainhere Integration',
+	'MODULE_PAYMENT_PAYMENTNETWORK_ADMIN_TITLE' => 'Payment Network Payment Module',
 	'MODULE_PAYMENT_PAYMENTNETWORK_ADMIN_DESCRIPTION' => '<a target=\"_blank\" href=\"https://www.exampledomainhere.com?ref=zen-cart\"><img style=\"float:right;margin-right:8px;\" src=\"https://www.exampledomainhere.com/images/logo.png?ref=zen-cart\"/></a> <br/><a target="_blank" href="https://www.exampledomainhere.com/signup?ref=zen-cart">Click Here to Sign Up for an Account</a><br /><br /><a target="_blank" href="https://mms.exampledomainhere.com/admin?ref=zen-cart">Login to the exampledomainhere Merchant Area</a><br /><br /><strong>Requirements:</strong><br /><hr />*<strong>exampledomainhere Account</strong> (see link above to signup)<br />*<strong>exampledomainhere MerchantID</strong> available from your Merchant Area<br/> *<strong>exampledomainhere Merchant Password</strong> set in mms &amp; required for zen-cart',
-	'MODULE_PAYMENT_PAYMENTNETWORK_ADMIN_WARNING' => 'Warning! Direct exampledomainhere integration must use HTTPS to follow PCI DSS compliancy. Get a certificate from a trused authority and host your website securely to continue using the Direct integration method.',
+	'MODULE_PAYMENT_PAYMENTNETWORK_ADMIN_WARNING' => 'Warning! Direct Payment Network integration must use HTTPS to follow PCI DSS compliancy. Get a certificate from a trused authority and host your website securely to continue using the Direct integration method.',
 	'MODULE_PAYMENT_PAYMENTNETWORK_CARD_HOLDER' => 'Name as shown on card',
 	'MODULE_PAYMENT_PAYMENTNETWORK_CARD_NUMBER' => 'Card Number',
 	'MODULE_PAYMENT_PAYMENTNETWORK_CARD_EXPIRE' => 'Card Expires',
