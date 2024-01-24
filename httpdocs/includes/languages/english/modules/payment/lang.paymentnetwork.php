@@ -1,9 +1,9 @@
 
 <?php
 // File protection as per Zen-Cart suggestions
-	if (!defined('IS_ADMIN_FLAG')) {
-	  die('Illegal Access');
-	}
+if (!defined('IS_ADMIN_FLAG')) {
+	die('Illegal Access');
+}
 // EOF: File protection
 
 $define = [

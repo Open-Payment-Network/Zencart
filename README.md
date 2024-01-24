@@ -1,4 +1,4 @@
-Disclaimer: Please note that we no longer support older versions of SDKs and Modules. We recommend that the latest versions are used. This Module can only be used for Hosted Integrations. It does not support Direct Integrations.
+Disclaimer: Please note that we no longer support older versions of SDKs and Modules. We recommend that the latest versions are used.
 
 # README
 

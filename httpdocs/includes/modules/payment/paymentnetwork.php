@@ -3,10 +3,11 @@
 if (!defined('IS_ADMIN_FLAG')) {
 	exit('Illegal Access');
 }
+
 $_SESSION['payment_attempt'] = 0;
 require(__DIR__ . '/paymentnetwork/StageOrder.php');
-class paymentnetwork
-{
+
+class paymentnetwork {
 
 	public $code, $version, $title, $description, $enabled, $order_status;
 	private $secret;
@@ -359,15 +360,15 @@ class paymentnetwork
 
 		return  <<<HTML
 <form id="silentPost" action="{$url}" method="post" target="{$target}">
-    {$fields}
-     <noscript>
-        <input type="submit" value="Continue">
-     </noscript>
+	{$fields}
+	 <noscript>
+		<input type="submit" value="Continue">
+	 </noscript>
 </form>
 <script>
-    window.setTimeout(function () {
-      document.forms.silentPost.submit();
-    }, 0);
+	window.setTimeout(function () {
+	  document.forms.silentPost.submit();
+	}, 0);
 </script>
 HTML;
 	}
@@ -421,13 +422,13 @@ HTML;
 	}
 
 	/*
-     * A function called after the order is created (placed)
-     * Here we want to stop any spoofs that we may have set
-     * up earlier and to upload the responses to the database
-     * NOTE: Only successful responses will be saved in an order
-     * otherwise an order would never have been created if payment
-     * has failed
-     */
+	 * A function called after the order is created (placed)
+	 * Here we want to stop any spoofs that we may have set
+	 * up earlier and to upload the responses to the database
+	 * NOTE: Only successful responses will be saved in an order
+	 * otherwise an order would never have been created if payment
+	 * has failed
+	 */
 	function after_order_create($zf_order_id)
 	{
 		global $db;
@@ -445,8 +446,8 @@ HTML;
 		// Always update carts to prevent duplicates
 		$db->Execute(
 			"UPDATE paymentnetwork_temp_carts
-            SET paymentnetwork_orderID = $zf_order_id
-            WHERE paymentnetwork_orderRef = \"{$this->res['orderRef']}\""
+			SET paymentnetwork_orderID = $zf_order_id
+			WHERE paymentnetwork_orderRef = \"{$this->res['orderRef']}\""
 		);
 		// Remove all carts that must've timed out
 		$db->Execute("DELETE FROM paymentnetwork_temp_carts WHERE paymentnetwork_cdate <= NOW() - INTERVAL 2 HOUR");
@@ -468,8 +469,8 @@ HTML;
 	}
 
 	/*
-     * Returns what the module is called
-     */
+	 * Returns what the module is called
+	 */
 	function module_title()
 	{
 		// Set the title and description based on the mode the module is in: Admin or Catalog
@@ -494,9 +495,9 @@ HTML;
 		return ($isEnabled && in_array(MODULE_PAYMENT_PAYMENTNETWORK_CAPTURE_TYPE, array('Direct', 'Direct V2'), true) && $this->is_https() || $isEnabled && in_array(MODULE_PAYMENT_PAYMENTNETWORK_CAPTURE_TYPE, array('Hosted', 'Modal'), true));
 	}
 	/*
-     * Returns different URL's for each integration for
-     * the continue to payment button
-     */
+	 * Returns different URL's for each integration for
+	 * the continue to payment button
+	 */
 	function form_url()
 	{
 		switch (MODULE_PAYMENT_PAYMENTNETWORK_CAPTURE_TYPE) {
@@ -511,8 +512,8 @@ HTML;
 	}
 
 	/*
-     * Draws input fields for card details when using direct integration
-     */
+	 * Draws input fields for card details when using direct integration
+	 */
 	function draw_direct_form()
 	{
 		global $order;
@@ -559,9 +560,9 @@ HTML;
 		return $selection;
 	}
 	/*
-     * Draws hidden input fields for the checkout confirmation page
-     * when using direct integration
-     */
+	 * Draws hidden input fields for the checkout confirmation page
+	 * when using direct integration
+	 */
 	function draw_direct_form_button($includeDeviceData = true)
 	{
 		$process_button_string = zen_draw_hidden_field('paymentnetwork_card_holder', $_POST['paymentnetwork_card_holder']) .
@@ -592,18 +593,18 @@ HTML;
 
 			$process_button_string .= <<<SCRIPT
 <script>
-    const screen_width = (window && window.screen ? window.screen.width : '0');
-    const screen_height = (window && window.screen ? window.screen.height : '0');
-    const screen_depth = (window && window.screen ? window.screen.colorDepth : '0');
-    const identity = (window && window.navigator ? window.navigator.userAgent : '');
-    const language = (window && window.navigator ? (window.navigator.language ? window.navigator.language : window.navigator.browserLanguage) : '');
-    const timezone = (new Date()).getTimezoneOffset();
-    const java = (window && window.navigator ? navigator.javaEnabled() : false);
-    document.getElementById('deviceIdentity').value = identity;
-    document.getElementById('deviceTimeZone').value = timezone;
-    document.getElementById('deviceCapabilities').value = 'javascript' + (java ? ',java' : '');
-    document.getElementById('deviceAcceptLanguage').value = language;
-    document.getElementById('deviceScreenResolution').value = screen_width + 'x' + screen_height + 'x' + screen_depth;
+	const screen_width = (window && window.screen ? window.screen.width : '0');
+	const screen_height = (window && window.screen ? window.screen.height : '0');
+	const screen_depth = (window && window.screen ? window.screen.colorDepth : '0');
+	const identity = (window && window.navigator ? window.navigator.userAgent : '');
+	const language = (window && window.navigator ? (window.navigator.language ? window.navigator.language : window.navigator.browserLanguage) : '');
+	const timezone = (new Date()).getTimezoneOffset();
+	const java = (window && window.navigator ? navigator.javaEnabled() : false);
+	document.getElementById('deviceIdentity').value = identity;
+	document.getElementById('deviceTimeZone').value = timezone;
+	document.getElementById('deviceCapabilities').value = 'javascript' + (java ? ',java' : '');
+	document.getElementById('deviceAcceptLanguage').value = language;
+	document.getElementById('deviceScreenResolution').value = screen_width + 'x' + screen_height + 'x' + screen_depth;
 </script>
 SCRIPT;
 		}
@@ -611,9 +612,9 @@ SCRIPT;
 		return $process_button_string;
 	}
 	/*
-     * Draws hidden input fields for the checkout confirmation page
-     * when using hosted integration
-     */
+	 * Draws hidden input fields for the checkout confirmation page
+	 * when using hosted integration
+	 */
 	function draw_hosted_form_button()
 	{
 		$fields = $this->create_hosted_request();
@@ -626,9 +627,9 @@ SCRIPT;
 		return $button_string;
 	}
 	/*
-     * Perform a basic check on card details provided to solve most
-     * user errors rather than sending any invalid data
-     */
+	 * Perform a basic check on card details provided to solve most
+	 * user errors rather than sending any invalid data
+	 */
 	function card_data_check()
 	{
 		global $db, $messageStack;
@@ -666,9 +667,9 @@ SCRIPT;
 		$this->card['expiry_year']  = $cc_validation->cc_expiry_year;
 	}
 	/*
-     * Make a curl request for direct integration
-     * Returns array of response data
-     */
+	 * Make a curl request for direct integration
+	 * Returns array of response data
+	 */
 	function make_request($url, $req)
 	{
 		$req['signature'] = $this->create_signature($req, $this->secret);
@@ -683,8 +684,8 @@ SCRIPT;
 		return $res;
 	}
 	/*
-     * Create a signature from the array and key provided
-     */
+	 * Create a signature from the array and key provided
+	 */
 	function create_signature(array $data, $key)
 	{
 		if (!$key || !is_string($key) || $key === '' || !$data || !is_array($data)) {
@@ -703,9 +704,9 @@ SCRIPT;
 		return hash('SHA512', $ret . $key);
 	}
 	/*
-     * Generate a random string with an optional length specifed
-     * (or otherwise 10 characters)
-     */
+	 * Generate a random string with an optional length specifed
+	 * (or otherwise 10 characters)
+	 */
 	public static function generate_random_string($length = 10)
 	{
 		/**
@@ -720,9 +721,9 @@ SCRIPT;
 		return $randomString;
 	}
 	/*
-     * Returns a boolean value on whether an array has the keys
-     * wanted from the $keys array
-     */
+	 * Returns a boolean value on whether an array has the keys
+	 * wanted from the $keys array
+	 */
 	public static function has_keys($array, $keys)
 	{
 		foreach ($keys as $key) {
@@ -733,8 +734,8 @@ SCRIPT;
 		return true;
 	}
 	/*
-     * Import a zen cart session
-     */
+	 * Import a zen cart session
+	 */
 	public static function import_session($session)
 	{
 		// Try to get the session back as best as possible
@@ -763,8 +764,8 @@ SCRIPT;
 		return $output;
 	}
 	/*
-     * Do something after the payment and order process is complete
-     */
+	 * Do something after the payment and order process is complete
+	 */
 	function after_process()
 	{
 		// Remove?
@@ -828,8 +829,8 @@ SCRIPT;
 			);
 			$db->perform(TABLE_ORDERS_STATUS_HISTORY, $sql_data_array);
 			$db->Execute("update " . TABLE_ORDERS  . "
-                  set orders_status = '" . (int)$new_order_status . "'
-                  where orders_id = '" . (int)$oID . "'");
+				  set orders_status = '" . (int)$new_order_status . "'
+				  where orders_id = '" . (int)$oID . "'");
 
 			$messageStack->add_session(sprintf(MODULE_PAYMENT_PAYMENTNETWORK_TEXT_REFUND_INITIATED, $res['transactionID'], $oID), 'success');
 
@@ -840,8 +841,8 @@ SCRIPT;
 		}
 	}
 	/*
-     * Used to check an install of the configuration in the Database
-     */
+	 * Used to check an install of the configuration in the Database
+	 */
 	function check()
 	{
 		global $db;
@@ -852,9 +853,9 @@ SCRIPT;
 		return $this->_check;
 	}
 	/*
-     * Setup process of the module
-     * Making sure that all tables and settings are updated.
-     */
+	 * Setup process of the module
+	 * Making sure that all tables and settings are updated.
+	 */
 	function install()
 	{
 		global $db;
@@ -875,37 +876,37 @@ SCRIPT;
 		$db->Execute("REPLACE INTO " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, use_function, date_added) values ('Set Refund Order Status', 'MODULE_PAYMENT_PAYMENTNETWORK_REFUNDED_STATUS_ID', '1', 'Set the status of refunded orders to this value. <br /><strong>Recommended: Pending[1]</strong>', '6', '25', 'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', now())");
 		$db->Execute("REPLACE INTO " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, use_function, date_added) values ('Set Partial Refund Order Status', 'MODULE_PAYMENT_PAYMENTNETWORK_PART_REFUNDED_STATUS_ID', '2', 'Set the status of partially refunded orders to this value. <br /><strong>Recommended: Processing[2]</strong>', '6', '25', 'zen_cfg_pull_down_order_statuses(', 'zen_get_order_status_name', now())");
 		$result = $db->Execute("
-            SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
-            WHERE TABLE_NAME = '" . TABLE_ORDERS . "'
-            AND TABLE_SCHEMA = '" . DB_DATABASE . "'
-            AND COLUMN_NAME IN ('paymentnetwork_xref', 'paymentnetwork_transactionUnique', 'paymentnetwork_amount_received', 'paymentnetwork_authorisationCode', 'paymentnetwork_responseMessage', 'paymentnetwork_lastAction')
-        ");
+			SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+			WHERE TABLE_NAME = '" . TABLE_ORDERS . "'
+			AND TABLE_SCHEMA = '" . DB_DATABASE . "'
+			AND COLUMN_NAME IN ('paymentnetwork_xref', 'paymentnetwork_transactionUnique', 'paymentnetwork_amount_received', 'paymentnetwork_authorisationCode', 'paymentnetwork_responseMessage', 'paymentnetwork_lastAction')
+		");
 
 		if (intval($result->fields['COUNT(*)']) < 1) {
 			$db->Execute("ALTER TABLE " . TABLE_ORDERS . "
-                ADD COLUMN `paymentnetwork_xref` VARCHAR(128) NULL,
-                ADD COLUMN `paymentnetwork_transactionUnique` VARCHAR(128) NULL,
-                ADD COLUMN `paymentnetwork_amount_received` FLOAT NOT NULL DEFAULT '0.0',
-                ADD COLUMN `paymentnetwork_authorisationCode` VARCHAR(128) NULL,
-                ADD COLUMN `paymentnetwork_responseMessage` TEXT NULL,
-                ADD COLUMN `paymentnetwork_lastAction` VARCHAR(32) NULL
-            ");
+				ADD COLUMN `paymentnetwork_xref` VARCHAR(128) NULL,
+				ADD COLUMN `paymentnetwork_transactionUnique` VARCHAR(128) NULL,
+				ADD COLUMN `paymentnetwork_amount_received` FLOAT NOT NULL DEFAULT '0.0',
+				ADD COLUMN `paymentnetwork_authorisationCode` VARCHAR(128) NULL,
+				ADD COLUMN `paymentnetwork_responseMessage` TEXT NULL,
+				ADD COLUMN `paymentnetwork_lastAction` VARCHAR(32) NULL
+			");
 		}
 
 		$db->Execute("CREATE TABLE IF NOT EXISTS paymentnetwork_temp_carts (paymentnetwork_orderRef VARCHAR(64) NOT NULL, paymentnetwork_session TEXT NOT NULL, paymentnetwork_cdate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, paymentnetwork_orderID int NULL)");
 		$background_colour = '#eee';
 	}
 	/*
-     * Uninstallation process of the module
-     */
+	 * Uninstallation process of the module
+	 */
 	function remove()
 	{
 		global $db;
 		$db->Execute("delete from " . TABLE_CONFIGURATION . " where configuration_key in ('" . implode("', '", $this->keys()) . "')");
 	}
 	/*
-     * The settings that this module provides
-     */
+	 * The settings that this module provides
+	 */
 	function keys()
 	{
 		return array(

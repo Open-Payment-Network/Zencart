@@ -17,7 +17,6 @@ if (isset($form_transaction_info->fields)) {
 	$output = '<td><table>' . "\n";
 	$output .= '<tr style="background-color : #cccccc; border-style : dotted;">' . "\n";
 	$output .= '<td valign="top"><strong>PaymentNetwork Info:</strong><table>' . "\n";
-
 	$output .= '<tr><td class="main">' . "\n";
 	$output .= "Transaction Unique Code\n";
 	$output .= '</td><td class="main">' . "\n";
@@ -28,23 +27,19 @@ if (isset($form_transaction_info->fields)) {
 	$output .= '</td><td class="main">' . "\n";
 	$output .= $form_transaction_info->fields['paymentnetwork_xref'] . "\n";
 	$output .= '</td></tr>' . "\n";
-
 	$output .= '<tr><td class="main">' . "\n";
 	$output .= "Amount Received\n";
 	$output .= '</td><td class="main">' . "\n";
 	$output .= substr($form_transaction_info->fields['paymentnetwork_responseMessage'], 0, -2) . "." . substr($form_transaction_info->fields['received'], strlen($form_transaction_info->fields['paymentnetwork_responseMessage']) - 2, strlen($form_transaction_info->fields['paymentnetwork_responseMessage'])) . "\n";
 	$output .= '</td></tr>' . "\n";
-
 	$output .= '</table></td>' . "\n";
 
 	if (MODULE_PAYMENT_PAYMENTNETWORK_CAPTURE_TYPE == 'Direct') {
-
 		// if (method_exists($this, '_doRefund')) {
 		$output .= '<td><table class="noprint">' . "\n";
 		$output .= '<tr style="background-color : #dddddd; border-style : dotted;">' . "\n";
 		$output .= '<td class="main">' . MODULE_PAYMENT_PAYMENTNETWORK_REFUND_TITLE . '<br />' . "\n";
 		$output .= zen_draw_form('paymentnetworkRefund', FILENAME_ORDERS, zen_get_all_get_params(array('action')) . 'action=doRefund', 'post', '', true) . zen_hide_session_id();;
-
 		$output .= MODULE_PAYMENT_PAYMENTNETWORK_REFUND . '<br />';
 		$output .= MODULE_PAYMENT_PAYMENTNETWORK_REFUND_AMOUNT_TEXT . ' ' . zen_draw_input_field('refamt', '', 'length="8" placeholder="Enter Amount"') . '<br />';
 		// confirm checkbox
@@ -56,12 +51,6 @@ if (isset($form_transaction_info->fields)) {
 		$output .= '<br /><input type="submit" name="buttonrefund" value="' . MODULE_PAYMENT_PAYMENTNETWORK_REFUND_BUTTON_TEXT . '" title="' . MODULE_PAYMENT_PAYMENTNETWORK_REFUND_BUTTON_TEXT . '" />';
 		$output .= '</form>';
 		$output .= '</td></tr></table></td>' . "\n";
-		//  echo $outputRefund;
-		//  }
-
-
-
-
 		$output .= '<td valign="top"><table class="noprint">' . "\n";
 		$output .= '<tr style="background-color : #dddddd; border-style : dotted;">' . "\n";
 		$output .= '<td class="main">' . MODULE_PAYMENT_PAYMENTNETWORK_CAPTURE_TITLE . '<br />' . "\n";
@@ -73,12 +62,11 @@ if (isset($form_transaction_info->fields)) {
 		// Comment field
 		$output .= '<br />' . MODULE_PAYMENT_PAYMENTNETWORK_CAPTURE_TEXT_COMMENTS . '<br />' . zen_draw_textarea_field('captnote', 'soft', '50', '2', MODULE_PAYMENT_PAYMENTNETWORK_CAPTURE_DEFAULT_MESSAGE);
 		// Message text
-
 		$output .= '<br /><input type="submit" name="btndocapture" value="' . MODULE_PAYMENT_PAYMENTNETWORK_CAPTURE_BUTTON_TEXT . '" title="' . MODULE_PAYMENT_PAYMENTNETWORK_CAPTURE_BUTTON_TEXT . '" />';
 		$output .= '</form>';
 		$output .= '</td></tr></table></td>' . "\n";
 	}
 	$output .= '</tr>' . "\n";
-
 	$output .= '</table></td>' . "\n";
+
 }
