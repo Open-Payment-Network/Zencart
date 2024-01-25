@@ -35,7 +35,7 @@ if (isset($form_transaction_info->fields)) {
 	$output .= '</table></td>' . "\n";
 
 	if (MODULE_PAYMENT_PAYMENTNETWORK_CAPTURE_TYPE == 'Direct') {
-		// if (method_exists($this, '_doRefund')) {
+
 		$output .= '<td><table class="noprint">' . "\n";
 		$output .= '<tr style="background-color : #dddddd; border-style : dotted;">' . "\n";
 		$output .= '<td class="main">' . MODULE_PAYMENT_PAYMENTNETWORK_REFUND_TITLE . '<br />' . "\n";
@@ -65,6 +65,7 @@ if (isset($form_transaction_info->fields)) {
 		$output .= '<br /><input type="submit" name="btndocapture" value="' . MODULE_PAYMENT_PAYMENTNETWORK_CAPTURE_BUTTON_TEXT . '" title="' . MODULE_PAYMENT_PAYMENTNETWORK_CAPTURE_BUTTON_TEXT . '" />';
 		$output .= '</form>';
 		$output .= '</td></tr></table></td>' . "\n";
+		
 	}
 	$output .= '</tr>' . "\n";
 	$output .= '</table></td>' . "\n";

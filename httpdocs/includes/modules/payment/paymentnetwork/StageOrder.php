@@ -8,10 +8,10 @@ if (!defined('IS_ADMIN_FLAG')) {
 class StageOrder {
 	// Create all the required variables
 	public function __construct($order_id) {
-		$this->_order_id = $order_id;
-		$this->_order = null;
-		$this->products = null;
-		$this->info = null;
+		$this->_order_id	= $order_id;
+		$this->_order		= null;
+		$this->products		= null;
+		$this->info			= null;
 	}
 	// Substitute the zen cart order for our temporary order
 	public function stage() {

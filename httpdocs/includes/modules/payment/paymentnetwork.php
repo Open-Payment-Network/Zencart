@@ -151,24 +151,24 @@ class paymentnetwork {
 	{
 		global $order;
 		return array(
-			"merchantID" => MODULE_PAYMENT_PAYMENTNETWORK_MERCHANT_ID,
-			"action" => "SALE",
-			"type" => 1,
-			"transactionUnique" => uniqid(),
-			"currencyCode" => MODULE_PAYMENT_PAYMENTNETWORK_CURRENCY_ID,
-			"amount" => intval($order->info['total'] * 100),
-			"orderRef" => strftime("%d/%m/%y %H:%M") . " - " . self::generate_random_string(),
-			"cardNumber" => $_POST['paymentnetwork_card_number'],
-			"cardExpiryMonth" => $_POST['paymentnetwork_card_expires_month'],
-			"cardExpiryYear" => $_POST['paymentnetwork_card_expires_year'],
-			"cardCVV" => $_POST['paymentnetwork_card_cvv'],
-			"customerName" => $_POST['paymentnetwork_card_holder'],
-			"customerEmail" => $order->customer['email_address'],
-			"customerPhone" => $order->customer['telephone'],
-			"customerAddress" => $order->billing['street_address'] . "\n" . $order->billing['suburb'] . "\n" . $order->billing['city'] . "\n" . $order->billing['state'],
-			"countryCode" => MODULE_PAYMENT_PAYMENTNETWORK_COUNTRY_ID,
-			"returnInternalData" => "Y",
-			"customerPostCode" => $order->billing['postcode'],
+			"merchantID"			=> MODULE_PAYMENT_PAYMENTNETWORK_MERCHANT_ID,
+			"action"				=> "SALE",
+			"type"					=> 1,
+			"transactionUnique" 	=> uniqid(),
+			"currencyCode"			=> MODULE_PAYMENT_PAYMENTNETWORK_CURRENCY_ID,
+			"amount"				=> intval($order->info['total'] * 100),
+			"orderRef"				=> strftime("%d/%m/%y %H:%M") . " - " . self::generate_random_string(),
+			"cardNumber"			=> $_POST['paymentnetwork_card_number'],
+			"cardExpiryMonth"		=> $_POST['paymentnetwork_card_expires_month'],
+			"cardExpiryYear"		=> $_POST['paymentnetwork_card_expires_year'],
+			"cardCVV"				=> $_POST['paymentnetwork_card_cvv'],
+			"customerName"			=> $_POST['paymentnetwork_card_holder'],
+			"customerEmail"			=> $order->customer['email_address'],
+			"customerPhone"			=> $order->customer['telephone'],
+			"customerAddress"		=> $order->billing['street_address'] . "\n" . $order->billing['suburb'] . "\n" . $order->billing['city'] . "\n" . $order->billing['state'],
+			"countryCode"			=> MODULE_PAYMENT_PAYMENTNETWORK_COUNTRY_ID,
+			"returnInternalData"	=> "Y",
+			"customerPostCode"		=> $order->billing['postcode'],
 		);
 	}
 
@@ -607,6 +607,7 @@ HTML;
 	document.getElementById('deviceScreenResolution').value = screen_width + 'x' + screen_height + 'x' + screen_depth;
 </script>
 SCRIPT;
+
 		}
 
 		return $process_button_string;
@@ -636,9 +637,9 @@ SCRIPT;
 
 		include(DIR_WS_CLASSES . 'cc_validation.php');
 
-		$cc_validation = new cc_validation();
-		$result        = $cc_validation->validate($_POST['paymentnetwork_card_number'], $_POST['paymentnetwork_card_expires_month'], $_POST['paymentnetwork_card_expires_year']);
-		$error         = '';
+		$cc_validation	= new cc_validation();
+		$result			= $cc_validation->validate($_POST['paymentnetwork_card_number'], $_POST['paymentnetwork_card_expires_month'], $_POST['paymentnetwork_card_expires_year']);
+		$error			= '';
 		switch ($result) {
 			case -1:
 				$error = sprintf(TEXT_CCVAL_ERROR_UNKNOWN_CARD, substr($cc_validation->cc_number, 0, 4));
@@ -654,8 +655,8 @@ SCRIPT;
 		}
 
 		if (($result == false) || ($result < 1)) {
-			$payment_error_return = 'payment_error=paymentnetwork';
-			$error_info2          = '&error=' . urlencode($error) . '&paymentnetwork_card_holder=' . urlencode($_POST['paymentnetwork_card_holder']) . '&paymentnetwork_card_expires_month=' . $_POST['paymentnetwork_card_expires_month'] . '&paymentnetwork_card_expires_year=' . $_POST['paymentnetwork_card_expires_year'];
+			$payment_error_return	= 'payment_error=paymentnetwork';
+			$error_info2			= '&error=' . urlencode($error) . '&paymentnetwork_card_holder=' . urlencode($_POST['paymentnetwork_card_holder']) . '&paymentnetwork_card_expires_month=' . $_POST['paymentnetwork_card_expires_month'] . '&paymentnetwork_card_expires_year=' . $_POST['paymentnetwork_card_expires_year'];
 			$messageStack->add_session('checkout_payment', $error . '<!-- [paymentnetwork] -->', 'error');
 			zen_redirect(zen_href_link(FILENAME_CHECKOUT_PAYMENT, '', 'SSL', true, false));
 		}
@@ -799,12 +800,12 @@ SCRIPT;
 		}
 
 		$req = array(
-			"merchantID" => MODULE_PAYMENT_PAYMENTNETWORK_MERCHANT_ID,
-			"action" => "REFUND",
-			"type" => 1,
-			"amount" => (float)$_POST['refamt'] * 100,
-			'xref' => $transaction_info->fields['paymentnetwork_xref'],
-			'merchantData' => $this->version
+			"merchantID"	=> MODULE_PAYMENT_PAYMENTNETWORK_MERCHANT_ID,
+			"action"		=> "REFUND",
+			"type"			=> 1,
+			"amount"		=> (float)$_POST['refamt'] * 100,
+			'xref'			=> $transaction_info->fields['paymentnetwork_xref'],
+			'merchantData'	=> $this->version
 
 		);
 
