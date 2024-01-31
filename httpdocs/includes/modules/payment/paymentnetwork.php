@@ -9,7 +9,7 @@ require(__DIR__ . '/paymentnetwork/StageOrder.php');
 
 class paymentnetwork {
 
-	public $code, $version, $title, $description, $enabled, $order_status;
+	public $code, $version, $title, $description, $order_status, $form_action_url, $sort_order, $_check, $enabled;
 	private $secret;
 
 	function __construct()
