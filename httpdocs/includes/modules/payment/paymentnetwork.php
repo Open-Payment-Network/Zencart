@@ -155,7 +155,7 @@ class paymentnetwork {
 			"action"				=> "SALE",
 			"type"					=> 1,
 			"transactionUnique" 	=> uniqid(),
-			"currencyCode"			=> MODULE_PAYMENT_PAYMENTNETWORK_CURRENCY_ID,
+			"currencyCode"			=> $order->info["currency"],
 			"amount"				=> intval($order->info['total'] * 100),
 			"orderRef"				=> strftime("%d/%m/%y %H:%M") . " - " . self::generate_random_string(),
 			"cardNumber"			=> $_POST['paymentnetwork_card_number'],
@@ -192,7 +192,7 @@ class paymentnetwork {
 			"merchantID"        => MODULE_PAYMENT_PAYMENTNETWORK_MERCHANT_ID,
 			"amount"            => intval($order->info['total'] * 100),
 			"countryCode"       => MODULE_PAYMENT_PAYMENTNETWORK_COUNTRY_ID,
-			"currencyCode"      => MODULE_PAYMENT_PAYMENTNETWORK_CURRENCY_ID,
+			"currencyCode"      => $order->info["currency"],
 			"transactionUnique" => uniqid(),
 			"orderRef"          => $ref,
 			"redirectURL"       => str_replace('&amp;', '&', zen_href_link(FILENAME_CHECKOUT_PROCESS, '', 'SSL', true)) . '&' . session_name() . '=' . session_id(),
@@ -868,7 +868,6 @@ SCRIPT;
 		$db->Execute("REPLACE INTO " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Merchant Secret', 'MODULE_PAYMENT_PAYMENTNETWORK_MERCHANT_SECRET', 'merchant_secret_here', 'Merchant signature secret as set in mms', '6', '4', now())");
 		$db->Execute("REPLACE INTO " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Payment Name.', 'MODULE_PAYMENT_PAYMENTNETWORK_CATALOG_TEXT_TITLE', 'Card Payment', 'Name of payment method shown to customer', '6', '5', now())");
 		$db->Execute("REPLACE INTO " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Display Order.', 'MODULE_PAYMENT_PAYMENTNETWORK_SORT_ORDER', '0', 'Sort order of display. Lowest is displayed first.', '6', '6', now())");
-		$db->Execute("REPLACE INTO " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Currency ID.', 'MODULE_PAYMENT_PAYMENTNETWORK_CURRENCY_ID', 'merchant_currency_code', 'ISO currency number', '6', '7', now())");
 		$db->Execute("REPLACE INTO " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Country ID.', 'MODULE_PAYMENT_PAYMENTNETWORK_COUNTRY_ID', 'merchant_country_code', 'ISO currency number', '6', '8', now())");
 		$db->Execute("REPLACE INTO " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Responsive Hosted Layout', 'MODULE_PAYMENT_PAYMENTNETWORK_RESPONSIVE_TYPE', 'True', 'Use responsive layout on a hosted form?', '6', '1', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
 
@@ -917,7 +916,6 @@ SCRIPT;
 			'MODULE_PAYMENT_PAYMENTNETWORK_MERCHANT_ID',
 			'MODULE_PAYMENT_PAYMENTNETWORK_MERCHANT_SECRET',
 			'MODULE_PAYMENT_PAYMENTNETWORK_CATALOG_TEXT_TITLE',
-			'MODULE_PAYMENT_PAYMENTNETWORK_CURRENCY_ID',
 			'MODULE_PAYMENT_PAYMENTNETWORK_COUNTRY_ID',
 			'MODULE_PAYMENT_PAYMENTNETWORK_SORT_ORDER',
 			'MODULE_PAYMENT_PAYMENTNETWORK_ORDER_STATUS_ID',
