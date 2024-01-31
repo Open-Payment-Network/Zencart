@@ -156,7 +156,7 @@ class paymentnetwork {
 			"type"					=> 1,
 			"transactionUnique" 	=> uniqid(),
 			"currencyCode"			=> $order->info["currency"],
-			"amount"				=> intval($order->info['total'] * 100),
+			"amount"				=> round(($order->info['currency_value'] != 0) ? ($order->info['total'] * $order->info['currency_value']) : $order->info['total'], 2),
 			"orderRef"				=> strftime("%d/%m/%y %H:%M") . " - " . self::generate_random_string(),
 			"cardNumber"			=> $_POST['paymentnetwork_card_number'],
 			"cardExpiryMonth"		=> $_POST['paymentnetwork_card_expires_month'],
@@ -190,7 +190,7 @@ class paymentnetwork {
 		$db->Execute("INSERT INTO paymentnetwork_temp_carts (`paymentnetwork_orderRef`, `paymentnetwork_session`, `paymentnetwork_orderID`) VALUES (\"$ref\", \"$session\", NULL)");
 		return array(
 			"merchantID"        => MODULE_PAYMENT_PAYMENTNETWORK_MERCHANT_ID,
-			"amount"            => intval($order->info['total'] * 100),
+			"amount"            => round(($order->info['currency_value'] != 0) ? ($order->info['total'] * $order->info['currency_value']) : $order->info['total'], 2),
 			"countryCode"       => MODULE_PAYMENT_PAYMENTNETWORK_COUNTRY_ID,
 			"currencyCode"      => $order->info["currency"],
 			"transactionUnique" => uniqid(),
