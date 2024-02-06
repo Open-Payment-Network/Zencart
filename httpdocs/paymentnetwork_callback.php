@@ -21,10 +21,13 @@ require_once('includes/modules/payment/paymentnetwork.php');
 //Let's see if it's a valid payment response
 if (paymentnetwork::has_keys($post, paymentnetwork::get_response_template())) {
 	//Finally try to update our order through the callback
-	$results = $db->Execute("SELECT * FROM paymentnetwork_temp_carts WHERE paymentnetwork_orderRef = \"" . $post['orderRef'] . "\"");
+	$resultsSQL = 'SELECT * FROM paymentnetwork_temp_carts WHERE paymentnetwork_orderRef = :order_ref';
+	$results = $db->bindVars($resultsSQL, ':order_ref', $post['orderRef'], 'string');
+	$results = $db->Execute($results);
+
 	if ($results->fields['paymentnetwork_orderID'] == null) {
 		paymentnetwork::import_session(json_decode($results->fields['paymentnetwork_session'], true));
-		require(DIR_WS_LANGUAGES . $_SESSION['language'] . '/checkout_process.php');
+		require(DIR_WS_LANGUAGES . $_SESSION['language'] . '/lang.checkout_process.php');
 		$_POST = $post;
 		require('includes/modules/checkout_process.php');
 	} else {

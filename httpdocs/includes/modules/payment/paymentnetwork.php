@@ -9,7 +9,7 @@ require(__DIR__ . '/paymentnetwork/StageOrder.php');
 
 class paymentnetwork {
 
-	public $code, $version, $title, $description, $order_status, $form_action_url, $sort_order, $_check, $enabled;
+	public $code, $version, $title, $description, $order_status, $form_action_url, $sort_order, $_check, $enabled, $res;
 	private $secret;
 
 	function __construct()
@@ -72,9 +72,14 @@ class paymentnetwork {
 	{
 		global $order, $db;
 
+
 		if (($this->enabled == true) && ((int)MODULE_PAYMENT_PAYMENTNETWORK_ZONE > 0)) {
+			
 			$check_flag = false;
-			$check = $db->Execute("select zone_id from " . TABLE_ZONES_TO_GEO_ZONES . " where geo_zone_id = '" . MODULE_PAYMENT_PAYMENTNETWORK_ZONE . "' and zone_country_id = '" . $order->billing['country']['id'] . "' order by zone_id");
+			$checkSQL = 'select zone_id from ' . TABLE_ZONES_TO_GEO_ZONES . ' where geo_zone_id = ' . MODULE_PAYMENT_PAYMENTNETWORK_ZONE . ' and zone_country_id = :country_id order by zone_id';
+			$check = $db->bindVars($checkSQL, ':country_id', $order->billing['country']['id'], 'string');
+			$check = $db->Execute($check);
+
 			while (!$check->EOF) {
 				if ($check->fields['zone_id'] < 1) {
 					$check_flag = true;
@@ -196,8 +201,8 @@ class paymentnetwork {
 			"currencyCode"      => $order->info["currency"],
 			"transactionUnique" => uniqid(),
 			"orderRef"          => $ref,
-			"redirectURL"       => str_replace('&amp;', '&', zen_href_link(FILENAME_CHECKOUT_PROCESS, '', 'SSL', true)) . '&' . session_name() . '=' . session_id(),
-			"callbackURL"       => ($this->is_https() ? HTTPS_SERVER . DIR_WS_HTTPS_CATALOG : HTTP_SERVER . DIR_WS_CATALOG) . 'paymentnetwork_callback.php',
+			"redirectURL"       => str_replace('&amp;', '&', zen_href_link(FILENAME_CHECKOUT_PROCESS, '', 'SSL', true)) . '&' . session_name() . '=' . session_id() . '&XDEBUG_SESSION_START=redirect',
+			"callbackURL"       => ($this->is_https() ? HTTPS_SERVER . DIR_WS_HTTPS_CATALOG : HTTP_SERVER . DIR_WS_CATALOG) . 'paymentnetwork_callback.php?XDEBUG_SESSION_START=callback',
 			"customerName"      => $order->billing['firstname'] . ' ' . $order->billing['lastname'],
 			"customerAddress"   => $order->billing['street_address'] . "\n" . $order->billing['suburb'] . "\n" . $order->billing['city'],
 			"customerPostCode"  => $order->billing['postcode'],
@@ -233,7 +238,10 @@ class paymentnetwork {
 				// Check if we came back via the redirect (PAYMENTNETWORK_CALLBACK WILL NOT BE SET!)
 				if (!defined('PAYMENTNETWORK_CALLBACK')) {
 					// Get the status of the callback
-					$results = $db->Execute("SELECT * FROM paymentnetwork_temp_carts WHERE paymentnetwork_orderRef = \"" . $this->res['orderRef'] . "\"");
+					$resultsSQL = 'SELECT * FROM paymentnetwork_temp_carts WHERE paymentnetwork_orderRef = :order_ref';
+					$result = $db->bindVars($resultsSQL, ':order_ref', $this->res['orderRef'], 'string');
+					$result = $db->Execute($result);
+
 					if ($results->fields['paymentnetwork_orderID'] !== null) {
 						// Make sure to prevent any duplicates...
 						$id = intval($results->fields['paymentnetwork_orderID']);
@@ -433,23 +441,27 @@ HTML;
 	function after_order_create($zf_order_id)
 	{
 		global $db;
-		$db->Execute(
-			"UPDATE " . TABLE_ORDERS . " SET " .
-				"paymentnetwork_xref = \"" . $this->res['xref'] . "\", " .
-				"paymentnetwork_transactionUnique = \"" . $this->res['transactionUnique'] . "\", " .
-				"paymentnetwork_amount_received = " . floatval($this->res['amountReceived']) / 100 . ", " .
-				"paymentnetwork_authorisationCode = \"" . $this->res['authorisationCode'] . "\", " .
-				"paymentnetwork_responseMessage = \"" . $this->res['responseMessage'] . "\", " .
-				"paymentnetwork_lastAction = \"" . $this->res['action'] . "\", " .
-				"orders_status = " . MODULE_PAYMENT_PAYMENTNETWORK_ORDER_STATUS_ID . " " .
-				"WHERE orders_id = $zf_order_id"
+
+		$updateSQL =(
+			'UPDATE ' . TABLE_ORDERS . ' SET paymentnetwork_xref = :xref, paymentnetwork_transactionUnique = :transaction_unique, paymentnetwork_amount_received = :amount_received,paymentnetwork_authorisationCode = :authorisation_code, paymentnetwork_responseMessage = :response_message, paymentnetwork_lastAction = :action, orders_status = ' . MODULE_PAYMENT_PAYMENTNETWORK_ORDER_STATUS_ID . ' WHERE orders_id = :order_id'
 		);
+
+		$update = $db->bindVars($updateSQL, ':xref', $this->res['xref'], 'string');
+		$update = $db->bindVars($update, ':transaction_unique', $this->res['transactionUnique'] , 'string');
+		$update = $db->bindVars($update, ':amount_received', (floatval($this->res['amountReceived']) / 100), 'float');
+		$update = $db->bindVars($update, ':authorisation_code', $this->res['authorisationCode'], 'string');
+		$update = $db->bindVars($update, ':response_message', $this->res['responseMessage'], 'string');
+		$update = $db->bindVars($update, ':action', $this->res['action'], 'string');
+		$update = $db->bindVars($update, ':order_id', $zf_order_id, 'integer');
+
+		$db->Execute($update);
+
 		// Always update carts to prevent duplicates
-		$db->Execute(
-			"UPDATE paymentnetwork_temp_carts
-			SET paymentnetwork_orderID = $zf_order_id
-			WHERE paymentnetwork_orderRef = \"{$this->res['orderRef']}\""
-		);
+		$resultSQL = 'UPDATE paymentnetwork_temp_carts SET paymentnetwork_orderID = :order_id WHERE paymentnetwork_orderRef = :order_ref';
+		$result = $db->bindVars($resultSQL, ':order_ref', $this->res['orderRef'], 'string');
+		$result = $db->bindVars($result, ':order_id', $zf_order_id, 'integer');
+		$result = $db->Execute($result);
+
 		// Remove all carts that must've timed out
 		$db->Execute("DELETE FROM paymentnetwork_temp_carts WHERE paymentnetwork_cdate <= NOW() - INTERVAL 2 HOUR");
 
