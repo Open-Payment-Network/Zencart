@@ -157,8 +157,8 @@ class paymentnetwork {
 		global $order, $currencies;
 
 		// Get Gateway formatted amount.
-		$totalAmount = $currencies->value($order->info['total'], ($order->info['currency_value'] != 0), $order->info['currency'], $order->info['currency_value']);
-		$totalAmount = bcmul($totalAmount, pow(10, $currencies->currencies[$order->info['currency']]['decimal_places']));
+		$total_amount = $currencies->value($order->info['total'], ($order->info['currency_value'] != 0), $order->info['currency'], $order->info['currency_value']);
+		$total_amount = bcmul($total_amount, pow(10, $currencies->currencies[$order->info['currency']]['decimal_places']));
 
 		return array(
 			"merchantID"			=> MODULE_PAYMENT_PAYMENTNETWORK_MERCHANT_ID,
@@ -166,7 +166,7 @@ class paymentnetwork {
 			"type"					=> 1,
 			"transactionUnique" 	=> uniqid(),
 			"currencyCode"			=> $order->info["currency"],
-			"amount"				=> $totalAmount,
+			"amount"				=> $total_amount,
 			"orderRef"				=> strftime("%d/%m/%y %H:%M") . " - " . self::generate_random_string(),
 			"cardNumber"			=> $_POST['paymentnetwork_card_number'],
 			"cardExpiryMonth"		=> $_POST['paymentnetwork_card_expires_month'],
@@ -199,12 +199,12 @@ class paymentnetwork {
 		// Upload session that contains their cart to table called `paymentnetwork_temp_carts`
 		$db->Execute("INSERT INTO paymentnetwork_temp_carts (`paymentnetwork_orderRef`, `paymentnetwork_session`, `paymentnetwork_orderID`) VALUES (\"$ref\", \"$session\", NULL)");
 		// Get Gateway formatted amount.
-		$totalAmount = $currencies->value($order->info['total'], ($order->info["currency_value"] != 0), $order->info["currency"], $order->info["currency_value"]);
-		$totalAmount = bcmul($totalAmount, pow(10, $currencies->currencies[$order->info['currency']]['decimal_places']));
+		$total_amount = $currencies->value($order->info['total'], ($order->info["currency_value"] != 0), $order->info["currency"], $order->info["currency_value"]);
+		$total_amount = bcmul($total_amount, pow(10, $currencies->currencies[$order->info['currency']]['decimal_places']));
 
 		return array(
 			"merchantID"        => MODULE_PAYMENT_PAYMENTNETWORK_MERCHANT_ID,
-			"amount"            => $totalAmount,
+			"amount"            => $total_amount,
 			"countryCode"       => MODULE_PAYMENT_PAYMENTNETWORK_COUNTRY_ID,
 			"currencyCode"      => $order->info["currency"],
 			"transactionUnique" => uniqid(),
