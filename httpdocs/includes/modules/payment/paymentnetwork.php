@@ -154,14 +154,19 @@ class paymentnetwork {
 	 */
 	public function create_direct_request()
 	{
-		global $order;
+		global $order, $currencies;
+
+		// Get Gateway formatted amount.
+		$totalAmount = $currencies->value($order->info['total'], ($order->info['currency_value'] != 0), $order->info['currency'], $order->info['currency_value']);
+		$totalAmount = bcmul($totalAmount, pow(10, $currencies->currencies[$order->info['currency']]['decimal_places']));
+
 		return array(
 			"merchantID"			=> MODULE_PAYMENT_PAYMENTNETWORK_MERCHANT_ID,
 			"action"				=> "SALE",
 			"type"					=> 1,
 			"transactionUnique" 	=> uniqid(),
 			"currencyCode"			=> $order->info["currency"],
-			"amount"				=> $this->getGatewayTotal($order->info['total'], $order->info["currency"]),
+			"amount"				=> $totalAmount,
 			"orderRef"				=> strftime("%d/%m/%y %H:%M") . " - " . self::generate_random_string(),
 			"cardNumber"			=> $_POST['paymentnetwork_card_number'],
 			"cardExpiryMonth"		=> $_POST['paymentnetwork_card_expires_month'],
@@ -184,7 +189,7 @@ class paymentnetwork {
 	 */
 	public function create_hosted_request()
 	{
-		global $order, $db;
+		global $order, $db, $currencies;
 		$ref = strftime("%d/%m/%y %H:%M") . " - " . self::generate_random_string();
 		$session = $_SESSION;
 		unset($session['navigation']);
@@ -193,16 +198,19 @@ class paymentnetwork {
 		$db->Execute("DELETE FROM paymentnetwork_temp_carts WHERE paymentnetwork_cdate <= NOW() - INTERVAL 2 HOUR");
 		// Upload session that contains their cart to table called `paymentnetwork_temp_carts`
 		$db->Execute("INSERT INTO paymentnetwork_temp_carts (`paymentnetwork_orderRef`, `paymentnetwork_session`, `paymentnetwork_orderID`) VALUES (\"$ref\", \"$session\", NULL)");
+		// Get Gateway formatted amount.
+		$totalAmount = $currencies->value($order->info['total'], ($order->info["currency_value"] != 0), $order->info["currency"], $order->info["currency_value"]);
+		$totalAmount = bcmul($totalAmount, pow(10, $currencies->currencies[$order->info['currency']]['decimal_places']));
 
 		return array(
 			"merchantID"        => MODULE_PAYMENT_PAYMENTNETWORK_MERCHANT_ID,
-			"amount"            => $this->getGatewayTotal($order->info['total'], $order->info["currency"]),
+			"amount"            => $totalAmount,
 			"countryCode"       => MODULE_PAYMENT_PAYMENTNETWORK_COUNTRY_ID,
 			"currencyCode"      => $order->info["currency"],
 			"transactionUnique" => uniqid(),
 			"orderRef"          => $ref,
-			"redirectURL"       => str_replace('&amp;', '&', zen_href_link(FILENAME_CHECKOUT_PROCESS, '', 'SSL', true)) . '&' . session_name() . '=' . session_id(),
-			"callbackURL"       => ($this->is_https() ? HTTPS_SERVER . DIR_WS_HTTPS_CATALOG : HTTP_SERVER . DIR_WS_CATALOG),
+			"redirectURL"       => str_replace('&amp;', '&', zen_href_link(FILENAME_CHECKOUT_PROCESS, '', 'SSL', true)) . '&' . session_name() . '=' . session_id() . '&XDEBUG_SESSION_START=redirect',
+			"callbackURL"       => ($this->is_https() ? HTTPS_SERVER . DIR_WS_HTTPS_CATALOG : HTTP_SERVER . DIR_WS_CATALOG) . 'paymentnetwork_callback.php?XDEBUG_SESSION_START=callback',
 			"customerName"      => $order->billing['firstname'] . ' ' . $order->billing['lastname'],
 			"customerAddress"   => $order->billing['street_address'] . "\n" . $order->billing['suburb'] . "\n" . $order->billing['city'],
 			"customerPostCode"  => $order->billing['postcode'],
@@ -816,7 +824,7 @@ SCRIPT;
 			"merchantID"	=> MODULE_PAYMENT_PAYMENTNETWORK_MERCHANT_ID,
 			"action"		=> "REFUND",
 			"type"			=> 1,
-			"amount"		=> $this->getGatewayTotal($_POST['refamt']),
+			"amount"		=> $_POST['refamt'],
 			'xref'			=> $transaction_info->fields['paymentnetwork_xref'],
 			'merchantData'	=> $this->version
 
@@ -935,22 +943,6 @@ SCRIPT;
 			'MODULE_PAYMENT_PAYMENTNETWORK_REFUNDED_STATUS_ID',
 			'MODULE_PAYMENT_PAYMENTNETWORK_PART_REFUNDED_STATUS_ID'
 		);
-	}
-
-	private function getGatewayTotal($total, $currency = 0) 
-	{
-		global $db;
-		// Get the exponent of the currency chosen in the order from the database.
-		$currencySQL = "SELECT decimal_places, `value` from currencies WHERE code = :currency_code";
-		$currency = $db->bindVars($currencySQL, ':currency_code', $currency, 'string');
-		$currency = $db->Execute($currency);
-
-		// Caluclate and format the amount for the Gateway.
-		$totalAmount = ($currency->fields['value'] != 0 ? bcmul($total, $currency->fields['value'], pow(10, $currency->fields['decimal_places'])) : $total);
-		$totalAmount = round($totalAmount, $currency->fields['decimal_places']);
-		$totalAmount = bcmul($totalAmount, pow(10, $currency->fields['decimal_places']));
-
-		return (int) $totalAmount;
 	}
 
 }
