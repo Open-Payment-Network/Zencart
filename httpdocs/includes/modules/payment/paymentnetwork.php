@@ -167,7 +167,7 @@ class paymentnetwork {
 			"transactionUnique" 	=> uniqid(),
 			"currencyCode"			=> $order->info["currency"],
 			"amount"				=> $total_amount,
-			"orderRef"				=> date_format(date_create(), "d/m/y H:i") . " - " . self::generate_random_string(),
+			"orderRef"				=> uniqid(),
 			"cardNumber"			=> $_POST['paymentnetwork_card_number'],
 			"cardExpiryMonth"		=> $_POST['paymentnetwork_card_expires_month'],
 			"cardExpiryYear"		=> $_POST['paymentnetwork_card_expires_year'],
@@ -190,7 +190,6 @@ class paymentnetwork {
 	public function create_hosted_request()
 	{
 		global $order, $db, $currencies;
-		$ref = date_format(date_create(), "d/m/y H:i") . " - " . self::generate_random_string();
 		$session = $_SESSION;
 		unset($session['navigation']);
 		$session = addslashes(json_encode($session));
@@ -208,7 +207,7 @@ class paymentnetwork {
 			"countryCode"       => MODULE_PAYMENT_PAYMENTNETWORK_COUNTRY_ID,
 			"currencyCode"      => $order->info["currency"],
 			"transactionUnique" => uniqid(),
-			"orderRef"          => $ref,
+			"orderRef"          => uniqid(),
 			"redirectURL"       => str_replace('&amp;', '&', zen_href_link(FILENAME_CHECKOUT_PROCESS, '', 'SSL', true)) . '&' . session_name() . '=' . session_id(),
 			"callbackURL"       => ($this->is_https() ? HTTPS_SERVER . DIR_WS_HTTPS_CATALOG : HTTP_SERVER . DIR_WS_CATALOG),
 			"customerName"      => $order->billing['firstname'] . ' ' . $order->billing['lastname'],
@@ -729,23 +728,7 @@ SCRIPT;
 		// Hash the signature string and the key together
 		return hash('SHA512', $ret . $key);
 	}
-	/*
-	 * Generate a random string with an optional length specifed
-	 * (or otherwise 10 characters)
-	 */
-	public static function generate_random_string($length = 10)
-	{
-		/**
-		 * Generate a random string of uppercase and lowercase letters
-		 * including numbers 0-9. Can be used to create seeds/ID"s etc
-		 */
-		$characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-		$randomString = "";
-		for ($i = 0; $i < $length; $i++) {
-			$randomString .= $characters[rand(0, strlen($characters) - 1)];
-		}
-		return $randomString;
-	}
+
 	/*
 	 * Returns a boolean value on whether an array has the keys
 	 * wanted from the $keys array
