@@ -10,7 +10,7 @@ require(__DIR__ . '/paymentnetwork/StageOrder.php');
 class paymentnetwork {
 
 	public $code, $version, $title, $description, $order_status, $form_action_url, $sort_order, $_check, $enabled, $res;
-	private $secret;
+	private $secret, $card;
 
 	function __construct()
 	{
@@ -157,8 +157,8 @@ class paymentnetwork {
 		global $order, $currencies;
 
 		// Get Gateway formatted amount.
-		$total_amount = $currencies->value($order->info['total'], ($order->info['currency_value'] != 0), $order->info['currency'], $order->info['currency_value']);
-		$total_amount = bcmul($total_amount, pow(10, $currencies->currencies[$order->info['currency']]['decimal_places']));
+		$totalAmount = $currencies->value($order->info['total'], ($order->info['currency_value'] != 0), $order->info['currency'], $order->info['currency_value']);
+		$totalAmount = bcmul($totalAmount, pow(10, $currencies->currencies[$order->info['currency']]['decimal_places']));
 
 		return array(
 			"merchantID"			=> MODULE_PAYMENT_PAYMENTNETWORK_MERCHANT_ID,
@@ -166,8 +166,8 @@ class paymentnetwork {
 			"type"					=> 1,
 			"transactionUnique" 	=> uniqid(),
 			"currencyCode"			=> $order->info["currency"],
-			"amount"				=> $total_amount,
-			"orderRef"				=> strftime("%d/%m/%y %H:%M") . " - " . self::generate_random_string(),
+			"amount"				=> $totalAmount,
+			"orderRef"				=> date_format(date_create(), "d/m/y H:i") . " - " . self::generate_random_string(),
 			"cardNumber"			=> $_POST['paymentnetwork_card_number'],
 			"cardExpiryMonth"		=> $_POST['paymentnetwork_card_expires_month'],
 			"cardExpiryYear"		=> $_POST['paymentnetwork_card_expires_year'],
@@ -190,7 +190,7 @@ class paymentnetwork {
 	public function create_hosted_request()
 	{
 		global $order, $db, $currencies;
-		$ref = strftime("%d/%m/%y %H:%M") . " - " . self::generate_random_string();
+		$ref = date_format(date_create(), "d/m/y H:i") . " - " . self::generate_random_string();
 		$session = $_SESSION;
 		unset($session['navigation']);
 		$session = addslashes(json_encode($session));
@@ -199,18 +199,18 @@ class paymentnetwork {
 		// Upload session that contains their cart to table called `paymentnetwork_temp_carts`
 		$db->Execute("INSERT INTO paymentnetwork_temp_carts (`paymentnetwork_orderRef`, `paymentnetwork_session`, `paymentnetwork_orderID`) VALUES (\"$ref\", \"$session\", NULL)");
 		// Get Gateway formatted amount.
-		$total_amount = $currencies->value($order->info['total'], ($order->info["currency_value"] != 0), $order->info["currency"], $order->info["currency_value"]);
-		$total_amount = bcmul($total_amount, pow(10, $currencies->currencies[$order->info['currency']]['decimal_places']));
+		$totalAmount = $currencies->value($order->info['total'], ($order->info["currency_value"] != 0), $order->info["currency"], $order->info["currency_value"]);
+		$totalAmount = bcmul($totalAmount, pow(10, $currencies->currencies[$order->info['currency']]['decimal_places']));
 
 		return array(
 			"merchantID"        => MODULE_PAYMENT_PAYMENTNETWORK_MERCHANT_ID,
-			"amount"            => $total_amount,
+			"amount"            => $totalAmount,
 			"countryCode"       => MODULE_PAYMENT_PAYMENTNETWORK_COUNTRY_ID,
 			"currencyCode"      => $order->info["currency"],
 			"transactionUnique" => uniqid(),
 			"orderRef"          => $ref,
-			"redirectURL"       => str_replace('&amp;', '&', zen_href_link(FILENAME_CHECKOUT_PROCESS, '', 'SSL', true)) . '&' . session_name() . '=' . session_id() . '&XDEBUG_SESSION_START=redirect',
-			"callbackURL"       => ($this->is_https() ? HTTPS_SERVER . DIR_WS_HTTPS_CATALOG : HTTP_SERVER . DIR_WS_CATALOG) . 'paymentnetwork_callback.php?XDEBUG_SESSION_START=callback',
+			"redirectURL"       => str_replace('&amp;', '&', zen_href_link(FILENAME_CHECKOUT_PROCESS, '', 'SSL', true)) . '&' . session_name() . '=' . session_id(),
+			"callbackURL"       => ($this->is_https() ? HTTPS_SERVER . DIR_WS_HTTPS_CATALOG : HTTP_SERVER . DIR_WS_CATALOG),
 			"customerName"      => $order->billing['firstname'] . ' ' . $order->billing['lastname'],
 			"customerAddress"   => $order->billing['street_address'] . "\n" . $order->billing['suburb'] . "\n" . $order->billing['city'],
 			"customerPostCode"  => $order->billing['postcode'],
@@ -541,12 +541,16 @@ HTML;
 
 		$ccnum = null;
 		for ($i = 1; $i < 13; $i++) {
-			$expires_month[] = array('id' => sprintf('%02d', $i), 'text' => strftime('%B - (%m)', mktime(0, 0, 0, $i, 1, 2000)));
+			$expires_month[] = array('id' => sprintf('%02d', $i), 'text' =>   
+			date('M (m)', mktime(0, 0, 0, $i, 1, 2000)  ));
 		}
 
 		$today = getdate();
 		for ($i = $today['year']; $i < $today['year'] + 15; $i++) {
-			$expires_year[] = array('id' => strftime('%y', mktime(0, 0, 0, 1, 1, $i)), 'text' => strftime('%Y', mktime(0, 0, 0, 1, 1, $i)));
+			$expires_year[] = array('id' => date('y', mktime(0, 0, 0, 1, 1, $i)), 'text' => 
+			date('Y', mktime(0, 0, 0, 1, 1, $i))
+		);
+
 		}
 
 		$onFocus = ' onfocus="methodSelect(\'pmt-' . $this->code . '\')"';
@@ -567,7 +571,7 @@ HTML;
 				),
 				array(
 					'title' => MODULE_PAYMENT_PAYMENTNETWORK_CARD_EXPIRE,
-					'field' => zen_draw_pull_down_menu('paymentnetwork_card_expires_month', $expires_month, strftime('%m'), 'id="paymentnetwork-cc-expires-month"' . $onFocus) . '&nbsp;' . zen_draw_pull_down_menu('paymentnetwork_card_expires_year', $expires_year, '', 'id="paymentnetwork-cc-expires-year"' . $onFocus),
+					'field' => zen_draw_pull_down_menu('paymentnetwork_card_expires_month', $expires_month, date('m'), 'id="paymentnetwork-cc-expires-month"' . $onFocus) . '&nbsp;' . zen_draw_pull_down_menu('paymentnetwork_card_expires_year', $expires_year, '', 'id="paymentnetwork-cc-expires-year"' . $onFocus),
 					'tag'   => 'paymentnetwork-card-expires-month'
 				),
 				array(
@@ -609,7 +613,7 @@ HTML;
 			);
 
 			foreach ($deviceData as $key => $value) {
-				$process_button_string .= '<input type="hidden" id="' . $key . '" name="browserInfo[' . $key . ']" value="' . htmlentities($value) . '" />';
+				$process_button_string .= '<input type="hidden" id="' . $key . '" name="browserInfo[' . $key . ']" value="' . htmlentities($value ?? '') . '" />';
 			}
 
 			$process_button_string .= <<<SCRIPT
