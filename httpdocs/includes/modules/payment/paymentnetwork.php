@@ -191,6 +191,7 @@ class paymentnetwork {
 	{
 		global $order, $db, $currencies;
 		$session = $_SESSION;
+		$ref = uniqid();
 		unset($session['navigation']);
 		$session = addslashes(json_encode($session));
 		// Delete any old sessions when creating any new one
@@ -206,8 +207,8 @@ class paymentnetwork {
 			"amount"            => $total_amount,
 			"countryCode"       => MODULE_PAYMENT_PAYMENTNETWORK_COUNTRY_ID,
 			"currencyCode"      => $order->info["currency"],
-			"transactionUnique" => uniqid(),
-			"orderRef"          => uniqid(),
+			"transactionUnique" => $ref,
+			"orderRef"          => $ref,
 			"redirectURL"       => str_replace('&amp;', '&', zen_href_link(FILENAME_CHECKOUT_PROCESS, '', 'SSL', true)) . '&' . session_name() . '=' . session_id(),
 			"callbackURL"       => ($this->is_https() ? HTTPS_SERVER . DIR_WS_HTTPS_CATALOG : HTTP_SERVER . DIR_WS_CATALOG),
 			"customerName"      => $order->billing['firstname'] . ' ' . $order->billing['lastname'],
@@ -249,9 +250,9 @@ class paymentnetwork {
 					$result = $db->bindVars($resultsSQL, ':order_ref', $this->res['orderRef'], 'string');
 					$result = $db->Execute($result);
 
-					if ($results->fields['paymentnetwork_orderID'] !== null) {
+					if ($result->fields['paymentnetwork_orderID'] !== null) {
 						// Make sure to prevent any duplicates...
-						$id = intval($results->fields['paymentnetwork_orderID']);
+						$id = intval($result->fields['paymentnetwork_orderID']);
 						define('PAYMENTNETWORK_CALLBACK_ID', $id);
 						$this->stage_order = new StageOrder($id);
 						$this->stage_order->stage();
