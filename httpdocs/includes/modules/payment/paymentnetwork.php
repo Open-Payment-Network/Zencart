@@ -869,7 +869,7 @@ SCRIPT;
 	function install()
 	{
 		global $db;
-		// General Config Options
+		// General Config Options - Option 'Direct' is deprecated and has been removed from integration options selectable.
 		$background_colour = '#d0d0d0';
 		$db->Execute("REPLACE INTO " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Enable PaymentNetwork Module', 'MODULE_PAYMENT_PAYMENTNETWORK_STATUS', 'True', 'Do you want to accept PaymentNetwork payments?', '6', '1', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
 		$db->Execute("REPLACE INTO " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Select Integration Method', 'MODULE_PAYMENT_PAYMENTNETWORK_CAPTURE_TYPE', 'Hosted', 'Do you want to use Direct (SSL Required), Hosted or Modal', '6', '2', 'zen_cfg_select_option(array(\'Hosted\', \'Modal\', \'Direct V2\'), ', now())");
