@@ -475,7 +475,7 @@ HTML;
 
 		$successUrl = zen_href_link(FILENAME_CHECKOUT_SUCCESS, '', 'SSL', true, false);
 
-		if (MODULE_PAYMENT_PAYMENTNETWORK_CAPTURE_TYPE == 'Hosted') {
+		if (MODULE_PAYMENT_PAYMENTNETWORK_CAPTURE_TYPE == 'Hosted' || MODULE_PAYMENT_PAYMENTNETWORK_CAPTURE_TYPE == 'Modal') {
 			return;
 		}
 
